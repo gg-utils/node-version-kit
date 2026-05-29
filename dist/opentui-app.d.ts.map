@@ -1,0 +1,1 @@
+{"version":3,"file":"opentui-app.d.ts","sourceRoot":"","sources":["../src/opentui-app.tsx"],"names":[],"mappings":"AAiBA,OAAO,KAAK,EACV,gCAAgC,EAEhC,4BAA4B,EAC5B,uBAAuB,EAExB,MAAM,gBAAgB,CAAC;AAmqBxB;;GAEG;AACH,wBAAgB,wBAAwB,CAAC,KAAK,EAAE;IAC9C,MAAM,EAAE,4BAA4B,CAAC;IACrC,iBAAiB,EAAE,gCAAgC,CAAC;IACpD,QAAQ,EAAE,uBAAuB,CAAC;CACnC,2CA4FA"}
