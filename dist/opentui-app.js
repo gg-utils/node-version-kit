@@ -1,4 +1,5 @@
-import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
+import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "@gg-utils/node-version-kit/opentui-runtime/jsx-runtime";
+/** @jsxImportSource @gg-utils/node-version-kit/opentui-runtime */
 /**
  * @fileoverview Renders the OpenTUI parity panel with command preview and report rows.
  *
@@ -69,7 +70,7 @@ function isNodeParityUiScopeChoice(value) {
 async function nodeParityOpenTui_runParityCheckWhenRunning(options) {
     try {
         const scopeArg = options.scopeChoice === "all" ? undefined : options.scopeChoice;
-        const nextReport = await options.runCheck({ scopeArg });
+        const nextReport = await options.runCheck(scopeArg === undefined ? {} : { scopeArg });
         if (!options.isCancelled()) {
             options.setReport(nextReport);
             options.setParityError("");

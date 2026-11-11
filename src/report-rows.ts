@@ -67,7 +67,7 @@ export function NodeVersionKit_surfaceResultsToRows(
   return results.map((result) => ({
     detail: result.detail,
     expected: result.expected ?? "—",
-    filePath: result.filePath,
+    ...(result.filePath !== undefined ? { filePath: result.filePath } : {}),
     observed: result.observed ?? "—",
     scope: result.scope,
     status: result.status,

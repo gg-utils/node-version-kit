@@ -6,5 +6,5 @@ export declare function NodeVersionKitOpenTuiApp(props: {
     config: NodeVersionKit_OpenTuiConfig;
     formatHumanReport: NodeVersionKit_FormatHumanReport;
     runCheck: NodeVersionKit_RunCheck;
-}): import("react/jsx-runtime").JSX.Element;
+}): import("react").JSX.Element;
 //# sourceMappingURL=opentui-app.d.ts.map

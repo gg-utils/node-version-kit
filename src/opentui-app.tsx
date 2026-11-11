@@ -1,3 +1,4 @@
+/** @jsxImportSource @gg-utils/node-version-kit/opentui-runtime */
 /**
  * @fileoverview Renders the OpenTUI parity panel with command preview and report rows.
  *
@@ -122,7 +123,7 @@ async function nodeParityOpenTui_runParityCheckWhenRunning(options: {
   try {
     const scopeArg =
       options.scopeChoice === "all" ? undefined : options.scopeChoice;
-    const nextReport = await options.runCheck({ scopeArg });
+    const nextReport = await options.runCheck(scopeArg === undefined ? {} : { scopeArg });
     if (!options.isCancelled()) {
       options.setReport(nextReport);
       options.setParityError("");

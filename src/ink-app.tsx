@@ -102,15 +102,15 @@ function MenuRoute(props: { testNpmScriptName: string }): React.ReactElement {
 
   useInput((input, key) => {
     if (input === "1") {
-      navigate("/parity");
+      void navigate("/parity");
       return;
     }
     if (input === "2") {
-      navigate("/diagnostics");
+      void navigate("/diagnostics");
       return;
     }
     if (input === "3") {
-      navigate("/tests");
+      void navigate("/tests");
       return;
     }
     if (input === "q" || key.escape) {
@@ -121,7 +121,7 @@ function MenuRoute(props: { testNpmScriptName: string }): React.ReactElement {
   return (
     <Box
       flexDirection="column"
-      aria-label={screenReader ? "Node parity main menu" : undefined}
+      {...(screenReader ? { "aria-label": "Node parity main menu" } : {})}
     >
       <Text bold>Node parity (Ink)</Text>
       <Text> </Text>
@@ -172,7 +172,7 @@ function ParityRoute(props: {
     void (async () => {
       try {
         const scopeArg = scopeChoice === "all" ? undefined : scopeChoice;
-        const nextReport = await runCheck({ scopeArg });
+        const nextReport = await runCheck(scopeArg === undefined ? {} : { scopeArg });
         if (!cancelled) {
           setReport(nextReport);
           setRunError("");
@@ -194,7 +194,7 @@ function ParityRoute(props: {
 
   useInput((input, key) => {
     if (key.escape) {
-      navigate("/");
+      void navigate("/");
       return;
     }
 
@@ -262,7 +262,7 @@ function ParityRoute(props: {
     return (
       <Box
         flexDirection="column"
-        aria-label={screenReader ? "Parity scope selection" : undefined}
+        {...(screenReader ? { "aria-label": "Parity scope selection" } : {})}
       >
         <Text bold>Parity — scope</Text>
         <Text> </Text>
@@ -317,7 +317,7 @@ function ParityRoute(props: {
   return (
     <Box
       flexDirection="column"
-      aria-label={screenReader ? "Parity results" : undefined}
+      {...(screenReader ? { "aria-label": "Parity results" } : {})}
     >
       <Text bold>Parity — result</Text>
       {runError.length > 0 ? <Text color="red">{runError}</Text> : null}
@@ -371,7 +371,7 @@ function DiagnosticsRoute(props: {
 
   useInput((input, key) => {
     if (input === "b" || key.escape) {
-      navigate("/");
+      void navigate("/");
     }
   });
 
@@ -395,7 +395,7 @@ function DiagnosticsRoute(props: {
   return (
     <Box
       flexDirection="column"
-      aria-label={screenReader ? "Diagnostics reference" : undefined}
+      {...(screenReader ? { "aria-label": "Diagnostics reference" } : {})}
     >
       <Text bold>Diagnostics (read-only reference)</Text>
       <Text>Repo root: {props.config.repoRoot}</Text>
@@ -498,12 +498,12 @@ function TestsRoute(props: {
 
   useInput((input, key) => {
     if (key.escape) {
-      navigate("/");
+      void navigate("/");
       return;
     }
     if (phase === "preview") {
       if (input === "b") {
-        navigate("/");
+        void navigate("/");
         return;
       }
       if (input === "r" || key.return) {
@@ -520,7 +520,7 @@ function TestsRoute(props: {
     return (
       <Box
         flexDirection="column"
-        aria-label={screenReader ? "Test command output" : undefined}
+        {...(screenReader ? { "aria-label": "Test command output" } : {})}
       >
         <Text bold>
           {NodeVersionKit_formatNodeParityTestNpmScript(
