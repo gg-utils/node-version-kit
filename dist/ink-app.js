@@ -13,7 +13,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
  * @documentation reviewed=2026-04-11 standard=FILE_OVERVIEW_STANDARDS_TYPESCRIPT@3
  */
 import { spawn } from "node:child_process";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Text, useApp, useInput, useIsScreenReaderEnabled } from "ink";
 import { MemoryRouter, Route, Routes, useNavigate } from "react-router";
 import { NodeVersionKit_formatNodeParityTestNpmScript, NodeVersionKit_formatNpxCheckParityCommand, } from "./format-commands.js";
@@ -47,22 +47,22 @@ function MenuRoute(props) {
     const screenReader = useIsScreenReaderEnabled();
     useInput((input, key) => {
         if (input === "1") {
-            navigate("/parity");
+            void navigate("/parity");
             return;
         }
         if (input === "2") {
-            navigate("/diagnostics");
+            void navigate("/diagnostics");
             return;
         }
         if (input === "3") {
-            navigate("/tests");
+            void navigate("/tests");
             return;
         }
         if (input === "q" || key.escape) {
             exit();
         }
     });
-    return (_jsxs(Box, { flexDirection: "column", "aria-label": screenReader ? "Node parity main menu" : undefined, children: [_jsx(Text, { bold: true, children: "Node parity (Ink)" }), _jsx(Text, { children: " " }), _jsx(Text, { children: "1 \u2014 Run parity check" }), _jsx(Text, { children: "2 \u2014 Diagnostics (surfaces reference)" }), _jsxs(Text, { children: ["3 \u2014 Run ", props.testNpmScriptName] }), _jsx(Text, { children: "q \u2014 Quit" })] }));
+    return (_jsxs(Box, { flexDirection: "column", ...(screenReader ? { "aria-label": "Node parity main menu" } : {}), children: [_jsx(Text, { bold: true, children: "Node parity (Ink)" }), _jsx(Text, { children: " " }), _jsx(Text, { children: "1 \u2014 Run parity check" }), _jsx(Text, { children: "2 \u2014 Diagnostics (surfaces reference)" }), _jsxs(Text, { children: ["3 \u2014 Run ", props.testNpmScriptName] }), _jsx(Text, { children: "q \u2014 Quit" })] }));
 }
 /**
  * Parity check wizard: scope and JSON toggles, CLI preview, in-process run, then tabular results.
@@ -88,7 +88,7 @@ function ParityRoute(props) {
         void (async () => {
             try {
                 const scopeArg = scopeChoice === "all" ? undefined : scopeChoice;
-                const nextReport = await runCheck({ scopeArg });
+                const nextReport = await runCheck(scopeArg === undefined ? {} : { scopeArg });
                 if (!cancelled) {
                     setReport(nextReport);
                     setRunError("");
@@ -109,7 +109,7 @@ function ParityRoute(props) {
     }, [phase, runCheck, scopeChoice]);
     useInput((input, key) => {
         if (key.escape) {
-            navigate("/");
+            void navigate("/");
             return;
         }
         if (phase === "scope") {
@@ -169,7 +169,7 @@ function ParityRoute(props) {
         scope: scopeChoice,
     });
     if (phase === "scope") {
-        return (_jsxs(Box, { flexDirection: "column", "aria-label": screenReader ? "Parity scope selection" : undefined, children: [_jsx(Text, { bold: true, children: "Parity \u2014 scope" }), _jsx(Text, { children: " " }), _jsxs(Text, { children: ["Scope: 1=all 2=static 3=hosted 4=runtime | j=toggle JSON output (", emitJson ? "on" : "off", ")"] }), _jsx(Text, { children: "n or Enter \u2014 continue to preview | Esc \u2014 menu" }), _jsx(Text, { children: " " }), _jsxs(Text, { children: ["Selected: ", scopeChoice, emitJson ? " + JSON" : ""] })] }));
+        return (_jsxs(Box, { flexDirection: "column", ...(screenReader ? { "aria-label": "Parity scope selection" } : {}), children: [_jsx(Text, { bold: true, children: "Parity \u2014 scope" }), _jsx(Text, { children: " " }), _jsxs(Text, { children: ["Scope: 1=all 2=static 3=hosted 4=runtime | j=toggle JSON output (", emitJson ? "on" : "off", ")"] }), _jsx(Text, { children: "n or Enter \u2014 continue to preview | Esc \u2014 menu" }), _jsx(Text, { children: " " }), _jsxs(Text, { children: ["Selected: ", scopeChoice, emitJson ? " + JSON" : ""] })] }));
     }
     if (phase === "preview") {
         return (_jsxs(Box, { flexDirection: "column", children: [_jsx(Text, { bold: true, children: "Parity \u2014 command preview" }), _jsx(NodeVersionKitInkCommandPreview, { commandLine: commandLine, title: "Canonical CLI" }), _jsx(Text, { children: " " }), _jsx(Text, { children: "Enter or r \u2014 run in-process | b \u2014 back | Esc \u2014 menu" })] }));
@@ -186,7 +186,7 @@ function ParityRoute(props) {
         : emitJson
             ? JSON.stringify(report, null, 2)
             : formatHumanReport(report);
-    return (_jsxs(Box, { flexDirection: "column", "aria-label": screenReader ? "Parity results" : undefined, children: [_jsx(Text, { bold: true, children: "Parity \u2014 result" }), runError.length > 0 ? _jsx(Text, { color: "red", children: runError }) : null, report ? (_jsxs(Text, { color: report.ok ? "green" : "red", children: [report.ok ? "OK" : "DRIFT", " (exit ", String(report.exitCode), ")"] })) : null, _jsxs(Text, { children: ["f \u2014 toggle failures-only (", failingOnly ? "on" : "off", ") | b \u2014 new run | Esc \u2014 menu"] }), _jsx(Text, { children: " " }), rows.length > 0 ? (_jsxs(Box, { flexDirection: "column", children: [_jsx(Text, { bold: true, children: "Comparison" }), rows.slice(0, 40).map((row) => (_jsxs(Text, { wrap: "truncate-end", children: ["[", row.status, "] ", row.scope, " ", row.surface, " expected=", row.expected, " ", "observed=", row.observed] }, `${row.scope}:${row.surface}`))), rows.length > 40 ? (_jsxs(Text, { dimColor: true, children: ["\u2026 ", String(rows.length - 40), " more rows"] })) : null] })) : null, _jsx(Text, { bold: true, children: "Transcript" }), _jsx(Box, { height: 12, flexDirection: "column", children: transcript
+    return (_jsxs(Box, { flexDirection: "column", ...(screenReader ? { "aria-label": "Parity results" } : {}), children: [_jsx(Text, { bold: true, children: "Parity \u2014 result" }), runError.length > 0 ? _jsx(Text, { color: "red", children: runError }) : null, report ? (_jsxs(Text, { color: report.ok ? "green" : "red", children: [report.ok ? "OK" : "DRIFT", " (exit ", String(report.exitCode), ")"] })) : null, _jsxs(Text, { children: ["f \u2014 toggle failures-only (", failingOnly ? "on" : "off", ") | b \u2014 new run | Esc \u2014 menu"] }), _jsx(Text, { children: " " }), rows.length > 0 ? (_jsxs(Box, { flexDirection: "column", children: [_jsx(Text, { bold: true, children: "Comparison" }), rows.slice(0, 40).map((row) => (_jsxs(Text, { wrap: "truncate-end", children: ["[", row.status, "] ", row.scope, " ", row.surface, " expected=", row.expected, " ", "observed=", row.observed] }, `${row.scope}:${row.surface}`))), rows.length > 40 ? (_jsxs(Text, { dimColor: true, children: ["\u2026 ", String(rows.length - 40), " more rows"] })) : null] })) : null, _jsx(Text, { bold: true, children: "Transcript" }), _jsx(Box, { height: 12, flexDirection: "column", children: transcript
                     .split("\n")
                     .slice(0, 80)
                     .map((line, index) => (_jsx(Text, { wrap: "truncate-end", children: line }, index))) })] }));
@@ -199,14 +199,14 @@ function DiagnosticsRoute(props) {
     const screenReader = useIsScreenReaderEnabled();
     useInput((input, key) => {
         if (input === "b" || key.escape) {
-            navigate("/");
+            void navigate("/");
         }
     });
     /**
      * Renders a titled bullet list capped at twelve rows with an overflow count when longer.
      */
     const block = (title, labels) => (_jsxs(Box, { flexDirection: "column", marginBottom: 1, children: [_jsx(Text, { bold: true, children: title }), labels.slice(0, 12).map((label) => (_jsxs(Text, { dimColor: true, children: ["- ", label] }, label))), labels.length > 12 ? (_jsxs(Text, { dimColor: true, children: ["\u2026 ", String(labels.length - 12), " more"] })) : null] }, title));
-    return (_jsxs(Box, { flexDirection: "column", "aria-label": screenReader ? "Diagnostics reference" : undefined, children: [_jsx(Text, { bold: true, children: "Diagnostics (read-only reference)" }), _jsxs(Text, { children: ["Repo root: ", props.config.repoRoot] }), _jsxs(Text, { children: ["Canonical .nvmrc: ", props.config.rootNvmrcPath] }), _jsx(Text, { children: " " }), block(".nvmrc surfaces", props.config.nvmrcSurfaceDefinitions.map((definition) => definition.label)), block("package.json engines", props.config.packageJsonSurfaceDefinitions.map((definition) => definition.label)), block("Render blueprint files", props.config.renderBlueprintSurfaceDefinitions.map((definition) => definition.label)), block("Config directories (extra files)", props.config.additionalConfigDirectories.map((definition) => definition.label)), block("Vercel projects", props.config.vercelProjectDefinitions.map((definition) => `${definition.teamScope}/${definition.projectName}`)), _jsx(Text, { children: "b or Esc \u2014 back" })] }));
+    return (_jsxs(Box, { flexDirection: "column", ...(screenReader ? { "aria-label": "Diagnostics reference" } : {}), children: [_jsx(Text, { bold: true, children: "Diagnostics (read-only reference)" }), _jsxs(Text, { children: ["Repo root: ", props.config.repoRoot] }), _jsxs(Text, { children: ["Canonical .nvmrc: ", props.config.rootNvmrcPath] }), _jsx(Text, { children: " " }), block(".nvmrc surfaces", props.config.nvmrcSurfaceDefinitions.map((definition) => definition.label)), block("package.json engines", props.config.packageJsonSurfaceDefinitions.map((definition) => definition.label)), block("Render blueprint files", props.config.renderBlueprintSurfaceDefinitions.map((definition) => definition.label)), block("Config directories (extra files)", props.config.additionalConfigDirectories.map((definition) => definition.label)), block("Vercel projects", props.config.vercelProjectDefinitions.map((definition) => `${definition.teamScope}/${definition.projectName}`)), _jsx(Text, { children: "b or Esc \u2014 back" })] }));
 }
 /**
  * Configured test route: previews the npm script, runs a subprocess, and tails output.
@@ -256,12 +256,12 @@ function TestsRoute(props) {
     }, [config.repoRoot, config.testNpmScriptName, phase]);
     useInput((input, key) => {
         if (key.escape) {
-            navigate("/");
+            void navigate("/");
             return;
         }
         if (phase === "preview") {
             if (input === "b") {
-                navigate("/");
+                void navigate("/");
                 return;
             }
             if (input === "r" || key.return) {
@@ -274,7 +274,7 @@ function TestsRoute(props) {
         }
     });
     if (phase === "running" || phase === "result") {
-        return (_jsxs(Box, { flexDirection: "column", "aria-label": screenReader ? "Test command output" : undefined, children: [_jsx(Text, { bold: true, children: NodeVersionKit_formatNodeParityTestNpmScript(config.testNpmScriptName) }), phase === "running" ? _jsx(Text, { children: "Running\u2026" }) : null, phase === "result" ? (_jsxs(Text, { color: exitCode === 0 ? "green" : "red", children: ["Exit ", String(exitCode)] })) : null, _jsx(NodeVersionKitInkCapturedOutputBlock, { bracketSource: true, lines: lines, maxLines: phase === "running" ? 18 : 28, title: "Output (tail)" }), phase === "result" ? (_jsx(Text, { children: "b \u2014 back to preview | Esc \u2014 menu" })) : (_jsx(Text, { children: "Wait for completion\u2026" }))] }));
+        return (_jsxs(Box, { flexDirection: "column", ...(screenReader ? { "aria-label": "Test command output" } : {}), children: [_jsx(Text, { bold: true, children: NodeVersionKit_formatNodeParityTestNpmScript(config.testNpmScriptName) }), phase === "running" ? _jsx(Text, { children: "Running\u2026" }) : null, phase === "result" ? (_jsxs(Text, { color: exitCode === 0 ? "green" : "red", children: ["Exit ", String(exitCode)] })) : null, _jsx(NodeVersionKitInkCapturedOutputBlock, { bracketSource: true, lines: lines, maxLines: phase === "running" ? 18 : 28, title: "Output (tail)" }), phase === "result" ? (_jsx(Text, { children: "b \u2014 back to preview | Esc \u2014 menu" })) : (_jsx(Text, { children: "Wait for completion\u2026" }))] }));
     }
     return (_jsxs(Box, { flexDirection: "column", children: [_jsx(Text, { bold: true, children: "Run configured test command" }), _jsx(NodeVersionKitInkCommandPreview, { commandLine: NodeVersionKit_formatNodeParityTestNpmScript(config.testNpmScriptName), title: "Command" }), _jsx(Text, { children: " " }), _jsx(Text, { children: "Enter or r \u2014 run | b \u2014 menu | Esc \u2014 menu" })] }));
 }

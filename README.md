@@ -103,3 +103,15 @@ Scripts currently expect the source-first workspace toolchain.
 - The package does not discover version surfaces on its own; adapters provide definitions.
 - It does not execute parity checks unless an adapter injects a runner into the UI.
 - Command helpers are pure string formatters.
+
+## Use from another repository
+
+Add this dependency to your `package.json` and install normally; compiled ESM and declarations are included in the tag, with no consumer build step.
+
+```json
+"@gg-utils/node-version-kit": "git+https://github.com/gg-utils/node-version-kit.git#v0.2.0"
+```
+
+Requires Node `>=22.0.0 <27` (Node 22, 24, and 26).
+
+Terminal components use React 19 and Ink 6. The OpenTUI component uses a scoped JSX runtime that forwards React's JSX functions, keeping terminal element types separate from DOM types. The compiled runtime and its declarations are included in `dist/`.
